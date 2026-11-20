@@ -1,0 +1,23 @@
+{
+  "name": "max-mila-memory-game",
+  "version": "1.0.0",
+  "description": "Max & Mila's World concentration game kiosk",
+  "main": "electron/main.js",
+  "author": "Max & Mila's World",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test",
+    "smoke": "electron scripts/electron-smoke-main.cjs",
+    "pack": "electron-builder --config electron-builder.config.cjs --dir",
+    "dist": "electron-builder --config electron-builder.config.cjs --win nsis"
+  },
+  "dependencies": {
+    "electron-updater": "6.8.11"
+  },
+  "devDependencies": {
+    "electron": "45.4.1",
+    "electron-builder": "26.18.0"
+  }
+}

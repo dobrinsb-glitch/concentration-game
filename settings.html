@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <form id="settings-form">
+    <header>
+      <div>
+        <p class="eyebrow">Max &amp; Mila’s World</p>
+        <h1>Settings</h1>
+      </div>
+      <span id="version"></span>
+    </header>
+
+    <section>
+      <h2>Game</h2>
+      <label class="field compact">
+        <span>Game time</span>
+        <input id="game-time" inputmode="numeric" pattern="[0-9]{1,3}:[0-5][0-9]" placeholder="02:00" required>
+        <small>Minutes and seconds (mm:ss)</small>
+      </label>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <h2>Rewards</h2>
+          <p>The game is unavailable when all quantities reach zero.</p>
+        </div>
+        <button id="add-reward" type="button" class="secondary">Add reward</button>
+      </div>
+      <div id="reward-list" class="item-list"></div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <h2>Videos</h2>
+          <p>Videos play in this order and loop until the screen is touched.</p>
+        </div>
+        <button id="add-videos" type="button" class="secondary">Add videos</button>
+      </div>
+      <div id="video-list" class="item-list"></div>
+      <label class="check-row">
+        <input id="video-autoplay" type="checkbox">
+        <span>Automatically play videos after inactivity</span>
+      </label>
+      <label class="field compact indent" id="idle-field">
+        <span>Inactivity time</span>
+        <span class="number-with-unit"><input id="idle-minutes" type="number" min="1" max="1440" step="1" required><span>minutes</span></span>
+      </label>
+    </section>
+
+    <section>
+      <h2>Application</h2>
+      <label class="check-row">
+        <input id="start-at-login" type="checkbox">
+        <span>Start automatically when Windows starts</span>
+      </label>
+    </section>
+
+    <section>
+      <h2>Updates</h2>
+      <label class="check-row">
+        <input id="updates-enabled" type="checkbox">
+        <span>Automatically download and install updates from GitHub</span>
+      </label>
+      <label class="field indent" id="update-scope-field">
+        <span>Allowed update level</span>
+        <select id="update-scope">
+          <option value="patch">Patch only — 1.2.x</option>
+          <option value="minor">Minor and patch — 1.x</option>
+          <option value="major">Major, minor and patch — any newer version</option>
+        </select>
+      </label>
+      <p id="update-status" class="status" aria-live="polite"></p>
+    </section>
+
+    <p id="form-message" class="form-message" aria-live="polite"></p>
+    <footer>
+      <button id="save" type="submit">Save settings</button>
+    </footer>
+  </form>
+  <script src="settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+# Max & Mila’s World
+
+An Electron application for the concentration game. The installed Windows app starts maximized with its native window frame visible. Its settings are a separate native Electron window, opened from the invisible area in the top-left corner of the home screen. Settings also open automatically on a new installation.
+
+## Develop locally
+
+```sh
+npm install
+npm start
+```
+
+The development window is intentionally shown at its configured size. Installed builds start maximized. Both the game and Settings retain their native window frames. Run the tests with `npm test`.
+
+## Build and release for Windows
+
+The workflow at `.github/workflows/windows-release.yml` runs on Windows. A manual run builds an installer and attaches it as a workflow artifact. A semantic-version tag builds the installer and publishes its update files to a GitHub Release:
+
+```sh
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+The tag supplies the packaged application version, so it must have the form `vMAJOR.MINOR.PATCH`. The repository must allow GitHub Actions to create releases; the workflow declares `contents: write` and uses the built-in `GITHUB_TOKEN`. The repository needs to be public for unauthenticated installed clients to download updates from GitHub Releases.
+
+The updater checks ten seconds after launch and then every four hours. When the latest release is within the configured patch/minor/major policy, it downloads it and restarts the app to install it. GitHub’s latest-release endpoint exposes one latest release, so a release outside the selected compatibility range is ignored rather than searching older releases.
+
+## Configuration data
+
+Settings and reward stock live in Electron’s per-user `userData` directory, not in browser storage. Images and videos selected in Settings are copied into its `media` directory so they remain available after the original files move. The defaults are:
+
+- updates enabled, patch releases only;
+- Windows automatic startup disabled;
+- video autoplay disabled, with a five-minute inactivity threshold;
+- two-minute game time.
+

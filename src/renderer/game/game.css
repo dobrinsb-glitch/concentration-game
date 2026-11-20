@@ -40,6 +40,12 @@ button:disabled {
   background: transparent;
 }
 
+.settings-hotspot {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .tile {
   perspective: 800px;
 }

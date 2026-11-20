@@ -3,7 +3,7 @@
 const path = require('node:path');
 const { BrowserWindow } = require('electron');
 
-function createWindowManager({ appRoot, isDevelopment, isConfigured, getUpdateStatus }) {
+function createWindowManager({ appRoot, isDevelopment, getUpdateStatus }) {
   let mainWindow;
   let settingsWindow;
 
@@ -31,9 +31,6 @@ function createWindowManager({ appRoot, isDevelopment, isConfigured, getUpdateSt
       if (!isDevelopment) mainWindow.maximize();
       mainWindow.show();
     });
-    mainWindow.webContents.once('did-finish-load', () => {
-      if (!isConfigured()) createSettingsWindow();
-    });
     mainWindow.on('closed', () => {
       mainWindow = null;
     });
@@ -53,8 +50,12 @@ function createWindowManager({ appRoot, isDevelopment, isConfigured, getUpdateSt
       height: 900,
       minWidth: 640,
       minHeight: 650,
-      parent: mainWindow || undefined,
-      modal: Boolean(mainWindow),
+      frame: true,
+      modal: false,
+      closable: true,
+      minimizable: true,
+      maximizable: true,
+      resizable: true,
       autoHideMenuBar: true,
       backgroundColor: '#f6f1e7',
       show: false,

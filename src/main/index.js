@@ -34,7 +34,6 @@ if (!hasSingleInstanceLock) {
     windows = createWindowManager({
       appRoot: APP_ROOT,
       isDevelopment,
-      isConfigured: () => store.get().configured,
       getUpdateStatus: () => updater.getStatus()
     });
 

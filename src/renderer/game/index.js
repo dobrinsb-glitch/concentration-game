@@ -1,4 +1,5 @@
 import { mountBoard } from './board.mjs';
+import { bindLongPress } from './long-press.mjs';
 import { chooseReward } from './model.mjs';
 import { mountVideo } from './video.mjs';
 
@@ -95,7 +96,9 @@ function home(showOutOfStock = false) {
     startButton.disabled = true;
     startButton.classList.add('gray');
   }
-  createHotspot('Open settings', 0, 0, 140, 134, openSettings);
+  const settingsButton = createHotspot('Hold for 10 seconds to open settings', 0, 0, 140, 134, () => {});
+  settingsButton.classList.add('settings-hotspot');
+  currentCleanup = bindLongPress(settingsButton, openSettings);
   videoButton();
   if (showOutOfStock && settings.configured && !stock()) outOfStock();
 }

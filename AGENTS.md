@@ -2,17 +2,19 @@
 
 ## Product shape
 
-This repository is a small Electron kiosk application. It has two renderer surfaces:
+This repository is a small Electron kiosk application organized under `src/`. It has two renderer surfaces:
 
-- `index.html` + `game.js` render the portrait game. This renderer owns presentation, game timing, card state, video playback, and inactivity detection.
-- `settings.html` + `settings.js` render the native Settings `BrowserWindow`. This renderer edits a draft and submits it through IPC.
+- `src/renderer/game/` renders the portrait game. `index.js` coordinates screens and settings, while `board.mjs`, `video.mjs`, and `model.mjs` isolate gameplay, playback, and pure game logic.
+- `src/renderer/settings/` renders the native Settings `BrowserWindow`. This renderer edits a draft and submits it through IPC.
 
-`electron/main.js` is the application authority. It owns both windows, persisted settings, reward inventory mutations, media import, Windows login startup, and GitHub update installation. `electron/game-preload.js` and `electron/settings-preload.js` expose separate, minimal APIs to their respective renderers.
+`src/main/index.js` composes the application authority. Modules beneath `src/main/` own windows, persisted settings, reward inventory mutations, media import, Windows login startup, and GitHub update installation. `src/preload/game.js` and `src/preload/settings.js` expose separate, minimal APIs to their respective renderers.
 
 Supporting modules are deliberately independent of Electron where practical:
 
-- `electron/config.js` defines defaults, validates the configuration boundary, persists JSON atomically, resolves media, and copies user-selected files.
-- `electron/update-policy.js` decides whether a newer semantic version is permitted by the selected patch/minor/major scope.
+- `src/main/settings/schema.js` defines defaults and validates the configuration boundary.
+- `src/main/settings/store.js` persists normalized JSON atomically.
+- `src/main/settings/media.js` resolves controlled media descriptors and copies user-selected files.
+- `src/main/update-policy.js` decides whether a newer semantic version is permitted by the selected patch/minor/major scope.
 - `electron-builder.config.cjs` defines Windows/NSIS packaging and derives the GitHub publisher from `GITHUB_REPOSITORY` in Actions.
 - `.github/workflows/windows-release.yml` publishes releases for both manual versioned runs and pushed semantic-version tags, and also retains workflow artifacts.
 
@@ -32,7 +34,7 @@ Supporting modules are deliberately independent of Electron where practical:
 4. **Preserve display behavior.** The packaged game starts maximized and all windows retain their native frames; Settings is a real modal `BrowserWindow`. The invisible settings target stays at the top-left of the home screen and first-run configuration opens automatically.
 5. **Persist operational state centrally.** Configuration, reward stock, and imported-media identity belong in `userData`, not `localStorage` or IndexedDB.
 6. **Release with semantic versions.** Tags use `vMAJOR.MINOR.PATCH`. Update policy means patch = same major/minor, minor = same major, and major = any newer release.
-7. **Test policy and validation changes.** Pure logic belongs outside `main.js` and needs `node:test` coverage. Before handing off, run `npm test` and at least a packaging smoke check when dependencies and platform permit.
+7. **Test policy and validation changes.** Pure logic belongs in focused modules and needs `node:test` coverage. Before handing off, run `npm test` and at least a packaging smoke check when dependencies and platform permit.
 
 ## Change guidance
 

@@ -10,14 +10,9 @@ module.exports = {
     output: 'dist'
   },
   files: [
-    'electron/**/*',
+    'src/**/*',
     'assets/**/*',
     'Video/**/*',
-    'index.html',
-    'game.js',
-    'settings.html',
-    'settings.css',
-    'settings.js',
     'package.json'
   ],
   asar: true,

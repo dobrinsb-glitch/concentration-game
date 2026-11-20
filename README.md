@@ -11,6 +11,14 @@ npm start
 
 The development window is intentionally shown at its configured size. Installed builds start maximized. Both the game and Settings retain their native window frames. Run the tests with `npm test`.
 
+## Source layout
+
+- `src/main/` contains Electron lifecycle, windows, IPC, updater, and settings/media services.
+- `src/preload/` contains the separate minimal bridges for the game and Settings renderers.
+- `src/renderer/game/` contains the portrait game, including isolated board, video, and pure model modules.
+- `src/renderer/settings/` contains the Settings form.
+- `assets/` and `Video/` remain at the application root because their paths are part of persisted media descriptors.
+
 ## Build and release for Windows
 
 The workflow at `.github/workflows/windows-release.yml` runs on Windows and always produces a published GitHub Release plus a workflow artifact. Start it manually and enter a new `MAJOR.MINOR.PATCH` version, or push a semantic-version tag:

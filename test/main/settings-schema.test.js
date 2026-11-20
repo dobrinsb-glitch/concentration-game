@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { defaultSettings, normalizeSettings } = require('../electron/config');
+const { defaultSettings, normalizeSettings } = require('../../src/main/settings/schema');
 
 test('new installations are unconfigured with safe app defaults', () => {
   const settings = defaultSettings();

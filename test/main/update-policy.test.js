@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { isUpdateAllowed, numericVersion } = require('../electron/update-policy');
+const { isUpdateAllowed, numericVersion } = require('../../src/main/update-policy');
 
 test('parses release and prefixed versions', () => {
   assert.deepEqual(numericVersion('v12.3.4'), [12, 3, 4]);

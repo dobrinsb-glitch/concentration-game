@@ -7,14 +7,14 @@ const { app, BrowserWindow } = require('electron');
 
 const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'max-mila-smoke-'));
 app.setPath('userData', userData);
-require('../electron/main');
+require('../src/main');
 
 async function waitForWindows() {
   const deadline = Date.now() + 10_000;
   while (Date.now() < deadline) {
     const windows = BrowserWindow.getAllWindows();
-    const game = windows.find((window) => window.webContents.getURL().endsWith('/index.html'));
-    const settings = windows.find((window) => window.webContents.getURL().endsWith('/settings.html'));
+    const game = windows.find((window) => window.webContents.getURL().endsWith('/renderer/game/index.html'));
+    const settings = windows.find((window) => window.webContents.getURL().endsWith('/renderer/settings/settings.html'));
     if (game && settings && !game.webContents.isLoading() && !settings.webContents.isLoading()) {
       return { game, settings };
     }

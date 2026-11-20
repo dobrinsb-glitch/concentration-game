@@ -1,11 +1,8 @@
 'use strict';
 
 const crypto = require('node:crypto');
-const fs = require('node:fs');
 const path = require('node:path');
-const { pathToFileURL } = require('node:url');
 
-const CONFIG_FILE = 'settings.json';
 const UPDATE_SCOPES = new Set(['patch', 'minor', 'major']);
 const BUNDLED_VIDEOS = [
   'Max & Mila’s World • din 12 Octombrie 2026.mp4',
@@ -99,76 +96,4 @@ function normalizeSettings(value) {
   };
 }
 
-function settingsPath(userDataPath) {
-  return path.join(userDataPath, CONFIG_FILE);
-}
-
-function readSettings(userDataPath) {
-  try {
-    return normalizeSettings(JSON.parse(fs.readFileSync(settingsPath(userDataPath), 'utf8')));
-  } catch {
-    return defaultSettings();
-  }
-}
-
-function writeSettings(userDataPath, settings) {
-  const normalized = normalizeSettings(settings);
-  fs.mkdirSync(userDataPath, { recursive: true });
-  const destination = settingsPath(userDataPath);
-  const temporary = `${destination}.tmp`;
-  fs.writeFileSync(temporary, `${JSON.stringify(normalized, null, 2)}\n`, { mode: 0o600 });
-  fs.renameSync(temporary, destination);
-  return normalized;
-}
-
-function inside(root, relativePath) {
-  const resolvedRoot = path.resolve(root);
-  const resolved = path.resolve(root, relativePath);
-  const comparableRoot = process.platform === 'win32' ? resolvedRoot.toLowerCase() : resolvedRoot;
-  const comparable = process.platform === 'win32' ? resolved.toLowerCase() : resolved;
-  if (comparable !== comparableRoot && !comparable.startsWith(`${comparableRoot}${path.sep}`)) {
-    throw new Error('Media source is outside its allowed directory.');
-  }
-  return resolved;
-}
-
-function sourcePath(source, appPath, userDataPath) {
-  if (source.startsWith('bundled:')) return inside(appPath, source.slice('bundled:'.length));
-  if (source.startsWith('user:')) return inside(path.join(userDataPath, 'media'), source.slice('user:'.length));
-  throw new Error('Unsupported media source.');
-}
-
-function hydrateSettings(settings, appPath, userDataPath, appVersion) {
-  const media = (item) => ({
-    ...item,
-    url: pathToFileURL(sourcePath(item.source, appPath, userDataPath)).href
-  });
-  return {
-    ...settings,
-    rewards: settings.rewards.map(media),
-    videos: settings.videos.map(media),
-    appVersion
-  };
-}
-
-function copyUserMedia(sourceFile, kind, userDataPath) {
-  const extensions = kind === 'images'
-    ? new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp'])
-    : new Set(['.mp4', '.m4v', '.webm', '.mov']);
-  const extension = path.extname(sourceFile).toLowerCase();
-  if (!extensions.has(extension)) throw new Error(`Unsupported ${kind === 'images' ? 'image' : 'video'} format.`);
-  const filename = `${id()}${extension}`;
-  const folder = path.join(userDataPath, 'media', kind);
-  fs.mkdirSync(folder, { recursive: true });
-  fs.copyFileSync(sourceFile, path.join(folder, filename));
-  return `user:${kind}/${filename}`;
-}
-
-module.exports = {
-  copyUserMedia,
-  defaultSettings,
-  hydrateSettings,
-  normalizeSettings,
-  readSettings,
-  writeSettings
-};
+module.exports = { defaultSettings, normalizeSettings };

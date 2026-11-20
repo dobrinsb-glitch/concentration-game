@@ -1,0 +1,156 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #26251d;
+  color: #504c27;
+  font: 18px system-ui;
+}
+
+main {
+  --scale: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background-size: cover;
+  transform: translate(-50%, -50%) scale(var(--scale));
+}
+
+button {
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+.hot,
+.tile {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+}
+
+.tile {
+  perspective: 800px;
+}
+
+.tile span,
+.tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tile span {
+  transition: transform .28s;
+  transform-style: preserve-3d;
+}
+
+.tile img {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+
+.face,
+.turned span {
+  transform: rotateY(180deg);
+}
+
+button:focus-visible {
+  outline: 7px solid #bd596f;
+  outline-offset: 3px;
+}
+
+.gray {
+  background: #aaa4;
+  backdrop-filter: grayscale(1);
+}
+
+.timer {
+  position: absolute;
+  top: 188px;
+  left: 0;
+  width: 100%;
+  color: #56512e;
+  font: bold 70px Arial;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.gift {
+  position: absolute;
+  top: 695px;
+  left: 215px;
+  width: 650px;
+  height: 450px;
+  object-fit: contain;
+}
+
+.shade {
+  position: absolute;
+  display: grid;
+  inset: 0;
+  place-items: center;
+  background: #38341f80;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  width: 890px;
+  max-height: 1640px;
+  padding: 46px;
+  gap: 24px;
+  border-radius: 38px;
+  background: #fff9ee;
+  box-shadow: 0 10px 50px #30281950;
+  font-size: 37px;
+}
+
+.panel h1 {
+  margin: 0;
+  font-size: 58px;
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 40px;
+}
+
+.panel button,
+.panel input {
+  padding: 14px;
+  border: 2px solid #b2a78e;
+  border-radius: 13px;
+  font: inherit;
+}
+
+.panel button {
+  background: #f2b2ca;
+  font-weight: bold;
+}
+
+.stock {
+  align-self: start;
+  width: 700px;
+  margin-top: 425px;
+  text-align: center;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  background: black;
+  object-fit: contain;
+}

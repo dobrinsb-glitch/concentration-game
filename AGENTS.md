@@ -14,7 +14,7 @@ Supporting modules are deliberately independent of Electron where practical:
 - `electron/config.js` defines defaults, validates the configuration boundary, persists JSON atomically, resolves media, and copies user-selected files.
 - `electron/update-policy.js` decides whether a newer semantic version is permitted by the selected patch/minor/major scope.
 - `electron-builder.config.cjs` defines Windows/NSIS packaging and derives the GitHub publisher from `GITHUB_REPOSITORY` in Actions.
-- `.github/workflows/windows-release.yml` builds manual artifacts and publishes tagged releases.
+- `.github/workflows/windows-release.yml` publishes releases for both manual versioned runs and pushed semantic-version tags, and also retains workflow artifacts.
 
 ## Data flow
 
@@ -40,4 +40,4 @@ Supporting modules are deliberately independent of Electron where practical:
 - Keep the settings schema backward-compatible. When adding a field, give it a safe default in `defaultSettings()` and normalize older/malformed values in `normalizeSettings()`.
 - Do not persist hydrated `url` fields. Persist only `id`, `source`, quantities, names, and application preferences.
 - Do not delete imported media merely because a draft removed it; cleanup requires an explicit, carefully tested orphan-management flow.
-- Keep update checks non-blocking and packaged-build-only. A manual GitHub Actions run is an artifact build; only semantic-version tags are published for clients.
+- Keep update checks non-blocking and packaged-build-only. Every GitHub Actions run must use a unique semantic version and publish a non-draft GitHub Release for clients; the workflow artifact is only a backup copy.

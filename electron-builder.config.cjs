@@ -44,6 +44,7 @@ module.exports = {
   publish: owner && repo ? [{
     provider: 'github',
     owner,
-    repo
+    repo,
+    releaseType: 'release'
   }] : undefined
 };

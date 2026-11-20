@@ -13,14 +13,14 @@ The development window is intentionally shown at its configured size. Installed 
 
 ## Build and release for Windows
 
-The workflow at `.github/workflows/windows-release.yml` runs on Windows. A manual run builds an installer and attaches it as a workflow artifact. A semantic-version tag builds the installer and publishes its update files to a GitHub Release:
+The workflow at `.github/workflows/windows-release.yml` runs on Windows and always produces a published GitHub Release plus a workflow artifact. Start it manually and enter a new `MAJOR.MINOR.PATCH` version, or push a semantic-version tag:
 
 ```sh
 git tag v1.0.1
 git push origin v1.0.1
 ```
 
-The tag supplies the packaged application version, so it must have the form `vMAJOR.MINOR.PATCH`. The repository must allow GitHub Actions to create releases; the workflow declares `contents: write` and uses the built-in `GITHUB_TOKEN`. The repository needs to be public for unauthenticated installed clients to download updates from GitHub Releases.
+The manual input or tag supplies the packaged application version. Tags must have the form `vMAJOR.MINOR.PATCH`. The repository must allow GitHub Actions to create releases; the workflow declares `contents: write` and uses the built-in `GITHUB_TOKEN`. The repository needs to be public for unauthenticated installed clients to download updates from GitHub Releases. Use a new version for every run so release assets are not overwritten.
 
 The updater checks ten seconds after launch and then every four hours. When the latest release is within the configured patch/minor/major policy, it downloads it and restarts the app to install it. GitHub’s latest-release endpoint exposes one latest release, so a release outside the selected compatibility range is ignored rather than searching older releases.
 

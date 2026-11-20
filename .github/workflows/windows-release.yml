@@ -2,6 +2,11 @@ name: Build Windows application
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (for example, 1.0.1)'
+        required: true
+        type: string
   push:
     tags:
       - 'v*.*.*'
@@ -27,21 +32,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Set version from release tag
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Set release version
         shell: pwsh
         run: |
-          $version = "${{ github.ref_name }}".TrimStart('v')
+          if ($env:GITHUB_REF -like "refs/tags/v*") {
+            $requestedVersion = $env:GITHUB_REF_NAME
+          } else {
+            $requestedVersion = "${{ inputs.version }}"
+          }
+          $version = $requestedVersion.TrimStart('v')
+          if ($version -notmatch '^\d+\.\d+\.\d+$') {
+            throw "Release version must use MAJOR.MINOR.PATCH format. Received: $requestedVersion"
+          }
           npm version $version --no-git-tag-version --allow-same-version
 
-      - name: Build installer
-        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
-        run: npm run dist -- --publish never
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build and publish release
-        if: startsWith(github.ref, 'refs/tags/v')
         run: npm run dist -- --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

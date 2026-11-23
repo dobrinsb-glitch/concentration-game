@@ -45,9 +45,38 @@ jobs:
             throw "Release version must use MAJOR.MINOR.PATCH format. Received: $requestedVersion"
           }
           npm version $version --no-git-tag-version --allow-same-version
+          "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
+          "RELEASE_TAG=v$version" >> $env:GITHUB_ENV
 
-      - name: Build and publish release
-        run: npm run dist -- --publish always
+      - name: Build Windows installer
+        run: npm run dist -- --publish never
+
+      - name: Verify release assets
+        shell: pwsh
+        run: |
+          $expectedAssets = @(
+            "dist/Max-and-Mila-Setup-$env:RELEASE_VERSION.exe"
+            "dist/Max-and-Mila-Setup-$env:RELEASE_VERSION.exe.blockmap"
+            "dist/latest.yml"
+          )
+          foreach ($asset in $expectedAssets) {
+            if (-not (Test-Path -LiteralPath $asset -PathType Leaf)) {
+              throw "Expected release asset was not produced: $asset"
+            }
+          }
+
+      - name: Publish GitHub release
+        shell: pwsh
+        run: |
+          $assets = @(
+            (Resolve-Path "dist/Max-and-Mila-Setup-$env:RELEASE_VERSION.exe").Path
+            (Resolve-Path "dist/Max-and-Mila-Setup-$env:RELEASE_VERSION.exe.blockmap").Path
+            (Resolve-Path "dist/latest.yml").Path
+          )
+          gh release create $env:RELEASE_TAG @assets --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title $env:RELEASE_VERSION --generate-notes
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to publish GitHub release $env:RELEASE_TAG"
+          }
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

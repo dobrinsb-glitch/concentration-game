@@ -34,14 +34,7 @@ function renderRewards() {
     row.className = 'item-row';
     const image = document.createElement('img');
     image.src = reward.url;
-    image.alt = 'Reward preview';
-    const change = button('Change image', 'secondary', async () => {
-      const replacement = await api.selectRewardImage();
-      if (!replacement) return;
-      reward.source = replacement.source;
-      reward.url = replacement.url;
-      image.src = reward.url;
-    });
+    image.alt = 'Medallion';
     const quantityLabel = document.createElement('label');
     quantityLabel.className = 'quantity';
     quantityLabel.textContent = 'Quantity';
@@ -54,11 +47,7 @@ function renderRewards() {
     quantity.value = String(reward.quantity);
     quantity.addEventListener('input', () => { reward.quantity = Number(quantity.value); });
     quantityLabel.append(quantity);
-    const remove = button('×', 'icon', () => {
-      draft.rewards.splice(draft.rewards.indexOf(reward), 1);
-      row.remove();
-    }, 'Remove reward');
-    row.append(image, change, quantityLabel, remove);
+    row.append(image, quantityLabel);
     rewardList.append(row);
   }
 }
@@ -110,13 +99,6 @@ async function load() {
   renderVideos();
   setConditionalFields();
 }
-
-document.querySelector('#add-reward').addEventListener('click', async () => {
-  const reward = await api.selectRewardImage();
-  if (!reward) return;
-  draft.rewards.push(reward);
-  renderRewards();
-});
 
 document.querySelector('#add-videos').addEventListener('click', async () => {
   const videos = await api.selectVideos();

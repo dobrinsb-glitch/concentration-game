@@ -4,9 +4,15 @@ const crypto = require('node:crypto');
 const path = require('node:path');
 
 const UPDATE_SCOPES = new Set(['patch', 'minor', 'major']);
-const BUNDLED_VIDEOS = [
+const MEDALLION = 'bundled:assets/gift8-MEDALLION.webp';
+const LEGACY_VIDEOS = [
   'Max & Mila’s World • din 12 Octombrie 2026.mp4',
   'SilverCrest. Прави живота ти лесен.mp4'
+];
+
+const BUNDLED_VIDEOS = [
+  'KW42_MMW_Image_DS.mp4',
+  'KW42_MMW_Image_LoveLanguage_SoMe_9x16_20s.mp4'
 ];
 
 function id() {
@@ -18,11 +24,7 @@ function defaultSettings() {
     schemaVersion: 1,
     configured: false,
     gameSeconds: 120,
-    rewards: Array.from({ length: 8 }, (_, index) => ({
-      id: `bundled-reward-${index}`,
-      source: `bundled:assets/gift${index}.webp`,
-      quantity: 0
-    })),
+    rewards: [{ id: 'bundled-reward-8', source: MEDALLION, quantity: 0 }],
     videos: BUNDLED_VIDEOS.map((name, index) => ({
       id: `bundled-video-${index}`,
       name,
@@ -56,18 +58,16 @@ function safeSource(value, kind) {
 function normalizeSettings(value) {
   const defaults = defaultSettings();
   const input = value && typeof value === 'object' ? value : {};
-  const rewards = Array.isArray(input.rewards) ? input.rewards.slice(0, 100).map((reward) => {
-    const source = safeSource(reward?.source, 'reward');
-    if (!source) return null;
-    return {
-      id: typeof reward.id === 'string' && reward.id ? reward.id.slice(0, 100) : id(),
-      source,
-      quantity: integer(Number(reward.quantity), 0, 0, 999999)
-    };
-  }).filter(Boolean) : defaults.rewards;
+  const medallion = Array.isArray(input.rewards)
+    ? input.rewards.find((reward) => reward?.source === MEDALLION)
+    : undefined;
+  const rewards = defaults.rewards;
+  rewards[0].quantity = integer(medallion?.quantity, 0, 0, 999999);
   const videos = Array.isArray(input.videos) ? input.videos.slice(0, 100).map((video) => {
     const source = safeSource(video?.source, 'video');
     if (!source) return null;
+    const legacyIndex = LEGACY_VIDEOS.findIndex((name) => source === `bundled:Video/${name}`);
+    if (legacyIndex >= 0) return defaults.videos[legacyIndex];
     return {
       id: typeof video.id === 'string' && video.id ? video.id.slice(0, 100) : id(),
       name: typeof video.name === 'string' && video.name.trim()

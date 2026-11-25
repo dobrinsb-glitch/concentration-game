@@ -19,7 +19,7 @@ test('settings store loads defaults and persists normalized data without hydrate
       configured: true,
       rewards: [{
         id: 'reward',
-        source: 'bundled:assets/gift0.webp',
+        source: 'bundled:assets/gift8-MEDALLION.webp',
         quantity: 3,
         url: 'file:///should-not-persist'
       }]
